@@ -1,20 +1,17 @@
 import React,{useState,useRef,useEffect} from 'react'
 import './sidebar.css'
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { useHistory } from 'react-router-dom';
-import { Tooltip } from '@material-ui/core';
 import {Avatar, IconButton} from '@material-ui/core'
-import LinkIcon from '@material-ui/icons/Link';
 import SendIcon from '@material-ui/icons/Send';
-import Grid from '@material-ui/core/Grid'
-import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { Scrollbars } from 'react-custom-scrollbars';
+import SwipeableDrawer from '@material-ui/core/Drawer';
+import CloseIcon from '@material-ui/icons/Close';
 
 function Sidebar(props) { 
     const scrollRef = useRef()
     const inputRef = useRef()
     const [input,setInput] = useState("")
-    const history = useHistory()
+    const [openDraw, setOpenDraw] = React.useState(true);
+
     const sendMessage = ()=>{
         if(input.length)
         { 
@@ -23,43 +20,50 @@ function Sidebar(props) {
             inputRef.current.focus();
         }
     }
-    useEffect(() => {
-        scrollRef.current.scrollTop(scrollRef.current.getScrollHeight())
-    }, [props.messages])
+    
+    // useEffect(() => {
+    //     scrollRef.current.scrollTop(scrollRef.current.getScrollHeight())
+    // }, [props.messages])
+    
+    useEffect(()=>{
+        setOpenDraw(props.openSidebar);
+    },[props.openSidebar])
+
+    const setOpenDrawParent=(open)=>{
+        props.setOpenDraw(open);
+    }
+
+    const toggleDrawer = (open) => (event) => {
+        
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+          return;
+        }
+        setOpenDraw(open);
+        setOpenDrawParent(open);
+      };
     return (
-        <Grid
-        item
-        container
-        xs={12} sm={5} md={3}
-        direction="column"
-        alignItems="stretch"
-        alignContent="stretch"
-        style={{height:'100vh'}}
-        >
+        <SwipeableDrawer 
+        disableSwipeToOpen={typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)}
+        anchor='right'  
+        open={openDraw} 
+        onClose={toggleDrawer(false)}
+        onOpen={toggleDrawer(true)}>
             <div className='chat'>
             <div className='chat__header'>
                 <div className='chat__header_avatar'>
+
                 <Avatar src={`https://avatars.dicebear.com/api/human/${props.avatar.userId}.svg?mood[]=happy`} style={{marginRight:'20px'}}/>
                 <h4 className='avatar__name'>{props.avatar.name}</h4>
                 </div>
                 <div>
-                <Tooltip title="Copy Invite link" aria-label="copy">
-                <CopyToClipboard onCopy={props.onCopyInvite} text={props.inviteUrl}>
-                <IconButton>
-                    <LinkIcon/>
-                </IconButton>
-                </CopyToClipboard>
-                </Tooltip>
-                <Tooltip title="Leave Meeting" aria-label="leave">
-                <IconButton onClick={()=>{props.leave();history.push('/');}} >
-                    <ExitToAppIcon />
-                </IconButton>
-                </Tooltip>
+                    <IconButton onClick={()=>{setOpenDraw(false);setOpenDrawParent(false);}} >
+                        <CloseIcon/>
+                    </IconButton>
                 </div>
             </div>
            
             <div className='chat__body'>
-            <Scrollbars ref={scrollRef} >
+            <Scrollbars ref={scrollRef}>
                 {props.messages.map((message,index)=>(
                     <p key={index}  className={`${(!message.sender) ? "chat__message":"chat__receiver"}`}>
                         <span className='chat__name avatar__name'>{message.name}</span>
@@ -86,7 +90,7 @@ function Sidebar(props) {
                 </IconButton>
         </div>
         </div>
-    </Grid>
+        </SwipeableDrawer>     
     )
 }
 

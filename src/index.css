@@ -12,6 +12,9 @@ body {
   height:100vh;
 }
 
+.MuiSvgIcon-root{
+  color:#f6f5f4ff;
+} 
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

@@ -4,7 +4,8 @@ import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const StyledVideo = styled.video`
-width: 90%;
+    max-width: 90%;
+    max-height:23vh;
 `;
 const Styledh4 = styled.h4`
 max-width:100px;
@@ -35,7 +36,7 @@ useEffect(() => {
 return (
     <Grid 
         container
-        item xs={12} sm={6}
+        item xs={6} sm={6}
         direction="column"
         justify="space-evenly"
         style={{color:'#d3d0cbff'}}
