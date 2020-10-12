@@ -21,9 +21,10 @@ function Sidebar(props) {
         }
     }
     
-    // useEffect(() => {
-    //     scrollRef.current.scrollTop(scrollRef.current.getScrollHeight())
-    // }, [props.messages])
+    useEffect(() => {
+        if(scrollRef.current)
+            scrollRef.current.scrollTop(scrollRef.current.getScrollHeight())
+    }, [props.messages])
     
     useEffect(()=>{
         setOpenDraw(props.openSidebar);
@@ -48,7 +49,7 @@ function Sidebar(props) {
         open={openDraw} 
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}>
-            <div className='chat'>
+            <div className='chat' >
             <div className='chat__header'>
                 <div className='chat__header_avatar'>
 

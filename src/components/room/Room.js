@@ -26,7 +26,6 @@ const videoConstraints = {
 
 const Room = (props) => {
     const childRef = useRef();
-    const btnRef = useRef();
     const socketRef = useRef();
     const userVideo = useRef();
     const peersRef = useRef([]);
