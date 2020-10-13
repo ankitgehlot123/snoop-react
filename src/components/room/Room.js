@@ -18,14 +18,15 @@ import CustomVideo from '../video/CustomVideo'
 import Menu from '../menu/Menu'
 import Tooltip from '@material-ui/core/Tooltip'
 import ForumIcon from '@material-ui/icons/Forum';
-
+import Badge from '@material-ui/core/Badge';
+import noteSound from '../../sounds/notification_simple-01.wav'
 const videoConstraints = {
     height: window.innerHeight / 2,
     width: window.innerWidth / 2
 };
 
 const Room = (props) => {
-    const childRef = useRef();
+    const alertRef = useRef();
     const socketRef = useRef();
     const userVideo = useRef();
     const peersRef = useRef([]);
@@ -36,6 +37,7 @@ const Room = (props) => {
     const [openSnack, setOpenSnack] = React.useState(false);
     const [micToggleBtn, setMicToggleBtn] = useState(<MicIcon/>);
     const [videoToggleBtn, setVideoToggleBtn] = useState(<VideocamIcon/>);
+    const [showBadge, setShowBadge] = useState(false);
 
     const [messages,setMessages] = useState([])
     const roomID = props.match.params.roomID;
@@ -104,7 +106,22 @@ const Room = (props) => {
                 item.peer.signal(payload.signal);
             });
             socketRef.current.on("createMessage", payload => {
-                setMessages((messages)=>[...messages,{name:payload.name,msg:payload.msg,dt:payload.dt,sender:payload.sender}])
+                setMessages((messages)=>{        
+                    setOpenSidebar(open=>{
+                    setShowBadge(show =>{
+                        console.log(open+""+show)
+                        if(open && show)
+                            return false
+                        else{
+                            if(!open)
+                            new Audio(noteSound).play()
+                            return true
+                        }
+                            
+                    })
+                    return open
+                })
+                 return[...messages,{name:payload.name,msg:payload.msg,dt:payload.dt,sender:payload.sender}]})
             })
             socketRef.current.on('error', function (err) {
                 console.log(err);
@@ -112,11 +129,17 @@ const Room = (props) => {
         })
         
     }
-    useEffect(() => {
-        childRef.current.handleClickOpen()
-    }, []);
-    
 
+    useEffect(() => {
+        alertRef.current.handleClickOpen()
+    }, []);
+
+    // useEffect(() => {
+
+
+    //     if(messages.length > 0)
+    //       setShowBadge(true)
+    // }, [messages]);
     function createPeer(userToSignal, callerID, stream, name) {
         const peer = new Peer({
             initiator: true,
@@ -198,9 +221,9 @@ const Room = (props) => {
             onClose={handleSnackClose}
             message={snackMsg}
             />
-           <AlertDialog  ref={childRef} defaultName={props.name} onOk={(name)=>create(name)} />
+           <AlertDialog  ref={alertRef} defaultName={props.name} onOk={(name)=>create(name)} />
             <CssBaseline />
-            <Grid container xs={12} direction="col" justify="space-around" alignItems="stretch" style={{height:'100vh',backgroundColor:'#090A0Bff',color:'#f6f5f4ff'}} alignContent="stretch">
+            <Grid container direction="row" justify="space-around" alignItems="stretch" style={{height:'100vh',backgroundColor:'#090A0Bff',color:'#f6f5f4ff'}} alignContent="stretch">
                 <Grid
                 container
                 item xs={12}
@@ -209,8 +232,17 @@ const Room = (props) => {
                 alignItems="flex-start">
                     <div className="menu">
                     <Tooltip title="Chat" aria-label="chat">
-                        <IconButton onClick={()=>{(openSidebar)?setOpenSidebar(false):setOpenSidebar(true)}}>
-                            <ForumIcon/>
+                        <IconButton onClick={()=>{
+                            if(openSidebar){
+                                setOpenSidebar(false)
+                            }else{
+                                setShowBadge(false)
+                                setOpenSidebar(true)
+                            }
+                        }}>
+                            <Badge color="secondary" variant="dot" invisible={!showBadge}>
+                                <ForumIcon/>
+                            </Badge>
                         </IconButton>
                     </Tooltip>
                     </div>
@@ -262,7 +294,11 @@ const Room = (props) => {
                 </Grid>
                 <Sidebar
                 openSidebar={openSidebar}
-                setOpenDraw={(open)=>setOpenSidebar(open)}
+                setOpenDraw={(open)=>{
+                    setOpenSidebar(open)
+                    if(!open && showBadge)
+                    setShowBadge(false)
+                }}
                 avatar={{userId:props.userId,name:props.name}} 
                 messages={messages}  
                 sendMessage={(msg)=>sendMsg(msg)}/>
