@@ -3,21 +3,21 @@ import './sidebar.css'
 import {Avatar, IconButton} from '@material-ui/core'
 import SendIcon from '@material-ui/icons/Send';
 import { Scrollbars } from 'react-custom-scrollbars';
-import SwipeableDrawer from '@material-ui/core/Drawer';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import CloseIcon from '@material-ui/icons/Close';
 
 function Sidebar(props) { 
     const scrollRef = useRef()
     const inputRef = useRef()
     const [input,setInput] = useState("")
-    const [openDraw, setOpenDraw] = React.useState(true);
-
+    const [openDraw, setOpenDraw] = React.useState(true)
+    
     const sendMessage = ()=>{
         if(input.length)
         { 
             props.sendMessage(input)
             setInput('')
-            inputRef.current.focus();
+            inputRef.current.focus()
         }
     }
     
@@ -27,20 +27,20 @@ function Sidebar(props) {
     }, [props.messages])
     
     useEffect(()=>{
-        setOpenDraw(props.openSidebar);
+        setOpenDraw(props.openSidebar)
     },[props.openSidebar])
 
     const setOpenDrawParent=(open)=>{
-        props.setOpenDraw(open);
+        props.setOpenDraw(open)
     }
 
     const toggleDrawer = (open) => (event) => {
         
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-          return;
+          return
         }
-        setOpenDraw(open);
-        setOpenDrawParent(open);
+        setOpenDraw(open)
+        setOpenDrawParent(open)
       };
     return (
         <SwipeableDrawer 

@@ -6,6 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const StyledVideo = styled.video`
     max-width: 90%;
     max-height:23vh;
+    transform:scale(-1, 1);
 `;
 const Styledh4 = styled.h4`
 max-width:100px;

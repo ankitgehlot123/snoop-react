@@ -134,12 +134,7 @@ const Room = (props) => {
         alertRef.current.handleClickOpen()
     }, []);
 
-    // useEffect(() => {
-
-
-    //     if(messages.length > 0)
-    //       setShowBadge(true)
-    // }, [messages]);
+    
     function createPeer(userToSignal, callerID, stream, name) {
         const peer = new Peer({
             initiator: true,
@@ -189,26 +184,30 @@ const Room = (props) => {
         setOpenSnack(false);
       };
     const muteUnmute = () => {
-    const enabled = userVideo.current.srcObject.getAudioTracks()[0].enabled;
-    if (enabled) {
-        userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
-        setMicToggleBtn(<MicOffIcon />)
-    } else {
-        setMicToggleBtn(<MicIcon />)
-        userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
+        if(userVideo.current && userVideo.current.srcObject){
+            const enabled = userVideo.current.srcObject.getAudioTracks()[0].enabled;
+            if (enabled) {
+                userVideo.current.srcObject.getAudioTracks()[0].enabled = false;
+                setMicToggleBtn(<MicOffIcon />)
+            } else {
+                setMicToggleBtn(<MicIcon />)
+                userVideo.current.srcObject.getAudioTracks()[0].enabled = true;
+            }
+        }
     }
-    }
-    
+
     const playStop = () => {
-    let enabled = userVideo.current.srcObject.getVideoTracks()[0].enabled;
-    if (enabled) {
-        userVideo.current.srcObject.getVideoTracks()[0].enabled = false;
-        setVideoToggleBtn(<VideocamOffIcon />)
-    } else {
-        setVideoToggleBtn(<VideocamIcon />)
-        userVideo.current.srcObject.getVideoTracks()[0].enabled = true;
-    }
-    }
+        if(userVideo.current && userVideo.current.srcObject){
+            let enabled = userVideo.current.srcObject.getVideoTracks()[0].enabled;
+            if (enabled) {
+                userVideo.current.srcObject.getVideoTracks()[0].enabled = false;
+                setVideoToggleBtn(<VideocamOffIcon />)
+            } else {
+                setVideoToggleBtn(<VideocamIcon />)
+                userVideo.current.srcObject.getVideoTracks()[0].enabled = true;
+            }
+            }
+        }
     return (
         <React.Fragment>
             <Snackbar
@@ -267,7 +266,7 @@ const Room = (props) => {
                         alignItems="center" 
                     >
                         
-                    <video style={{maxWidth: '90%',maxHeight:'23vh'}} muted  ref={userVideo} autoPlay playsInline />
+                    <video style={{maxWidth: '90%',maxHeight:'23vh',transform: 'scale(-1, 1)'}} muted  ref={userVideo} autoPlay playsInline />
                     <h4>You</h4>
                     </Grid>
                     
